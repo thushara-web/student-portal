@@ -5,23 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { font-family: Arial; background:#0f172a; color:white; margin:0; padding:20px; }
-    h1,h2,h3 { margin:10px 0; }
+    h1,h2,h3 { margin:10px 0; text-align:center; }
     input, textarea, button { width:90%; max-width:400px; padding:10px; margin:8px 0; border-radius:6px; border:none; font-size:16px; }
     button { font-weight:bold; cursor:pointer; }
-    .box { background:#1e293b; padding:20px; border-radius:10px; margin:15px auto; max-width:450px; }
-    ul { list-style:none; padding:0; }
+    .box { background:#1e293b; padding:20px; border-radius:10px; margin:15px auto; max-width:500px; }
+    ul { list-style:none; padding:0; margin-top:15px; }
     li { text-align:left; margin:10px 0; }
-    .answer { padding:10px; border-radius:6px; display:block; margin-top:5px; }
+    .answer { padding:10px; border-radius:8px; display:block; margin-top:5px; font-weight:bold; }
     .programming { background:#2563eb33; color:#fff; }
     .dsa { background:#db277733; color:#fff; }
     .career { background:#16a34a33; color:#fff; }
     #logout { background:#ef4444; margin-top:10px; }
+    .related { font-size:14px; color:#fcd34d; margin-top:5px; }
+    mark { background:#fcd34d; color:#000; }
   </style>
 </head>
 <body>
 
 <h1>🎓 Career & DSA Guidance Portal</h1>
-<p>Ask any question about Programming, DSA, or Career guidance.</p>
+<p style="text-align:center;">Ask any question about Programming, DSA, or Career guidance.</p>
 
 <div class="box" id="loginBox">
   <h2>Login</h2>
@@ -47,12 +49,15 @@ let answers = {
     "python": "Python is great for Data Science, AI, web development, and automation.",
     "java": "Java is used in enterprise apps and Android development.",
     "c++": "C++ is important for competitive programming and system software.",
-    "c": "C helps understand low-level programming and memory management."
+    "c": "C helps understand low-level programming and memory management.",
+    "javascript": "JavaScript is used for web development, front-end and backend (Node.js)."
   },
   "dsa": {
     "dsa": "DSA (Data Structures & Algorithms) is essential for coding interviews.",
     "algorithm": "Practice algorithms like sorting, searching, recursion, and graph problems.",
-    "data structures": "Key DS: arrays, linked lists, stacks, queues, trees, graphs."
+    "data structures": "Key DS: arrays, linked lists, stacks, queues, trees, graphs.",
+    "recursion": "Recursion is a method where a function calls itself to solve problems.",
+    "graph": "Graphs are important for modeling networks and solving advanced problems."
   },
   "career": {
     "skills": "Focus on coding, problem solving, communication, and teamwork.",
@@ -87,46 +92,13 @@ function showPortal() {
   }
 }
 
+function highlightKeywords(text, keywords){
+  keywords.forEach(k => {
+    let re = new RegExp(k, "gi");
+    text = text.replace(re, `<mark>${k}</mark>`);
+  });
+  return text;
+}
+
 function postQuestion() {
   let q = document.getElementById("question").value.trim();
-  if(q==="") return;
-
-  let qs = JSON.parse(localStorage.getItem("questions") || "[]");
-
-  let lowerQ = q.toLowerCase();
-  let a = "Sorry, I don't have advice for that yet.";
-
-  let categoryFound = "career"; // default
-
-  // Check for keywords in all categories
-  for(let cat in answers){
-    for(let key in answers[cat]){
-      if(lowerQ.includes(key)){
-        a = answers[cat][key];
-        categoryFound = cat;
-        break;
-      }
-    }
-  }
-
-  qs.push({question:q, answer:a, category:categoryFound});
-  localStorage.setItem("questions", JSON.stringify(qs));
-  document.getElementById("question").value="";
-  loadQuestions();
-}
-
-function loadQuestions() {
-  let qs = JSON.parse(localStorage.getItem("questions") || "[]");
-  let out = "";
-  qs.forEach(obj => {
-    out += `<li><b>[${obj.category.toUpperCase()}]</b> Q: ${obj.question}<br>
-            <span class="answer ${obj.category}">Advice: ${obj.answer}</span></li>`;
-  });
-  document.getElementById("list").innerHTML = out;
-}
-
-showPortal();
-</script>
-
-</body>
-  </html>
