@@ -1,40 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Student Portal</title>
+  <title>Career Guidance Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    input, textarea, button {
-      width: 90%;
-      max-width: 400px;
-      padding: 10px;
-      margin: 8px;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      background: #22c55e;
-      font-weight: bold;
-    }
-    .box {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
+    body { font-family: Arial; background:#0f172a; color:white; text-align:center; padding:20px; }
+    input, textarea, button { width:90%; max-width:400px; padding:10px; margin:8px; border-radius:6px; border:none; }
+    button { background:#22c55e; font-weight:bold; cursor:pointer; }
+    .box { background:#1e293b; padding:20px; border-radius:10px; margin:15px; }
+    li { text-align:left; margin:5px 0; }
+    .answer { color:#22c55e; margin-bottom:15px; }
   </style>
 </head>
 <body>
 
-<h1>🎓 Student Portal</h1>
-<p>Ask questions • Save profile • Learn together</p>
+<h1>🎓 Career Guidance Portal</h1>
+<p>Ask questions about career paths, skills, and jobs.</p>
 
 <div class="box" id="loginBox">
   <h2>Login</h2>
@@ -44,48 +25,75 @@
 
 <div class="box" id="portal" style="display:none">
   <h2>Welcome, <span id="user"></span></h2>
-  <textarea id="question" placeholder="Ask your question..."></textarea>
-  <button onclick="post()">Post Question</button>
-  <h3>Your Questions</h3>
+
+  <textarea id="question" placeholder="Ask a career question..."></textarea>
+  <button onclick="postQuestion()">Get Advice</button>
+
+  <h3>Your Questions & Guidance</h3>
   <ul id="list"></ul>
 </div>
 
 <script>
+// Pre-set career guidance answers
+let answers = {
+  "programming": "Learning programming (Python, Java, C++) opens up software and IT careers.",
+  "python": "Python is great for data science, AI, automation, and web development.",
+  "java": "Java is widely used in enterprise software and Android development.",
+  "skills": "Focus on coding, problem solving, communication, and teamwork.",
+  "jobs": "IT, data science, web development, AI, cloud computing are popular career paths.",
+  "internship": "Try internships in companies or research labs to gain experience.",
+  "placements": "Practice coding questions, aptitude, and soft skills for campus placements.",
+  "college": "Choose courses aligned with your career goals and interests."
+};
+
 function login() {
-  let u = document.getElementById("username").value;
+  let u = document.getElementById("username").value.trim();
   if(u==="") { alert("Enter username"); return; }
   localStorage.setItem("user", u);
-  show();
+  showPortal();
 }
 
-function show() {
+function showPortal() {
   let u = localStorage.getItem("user");
   if(u){
     document.getElementById("loginBox").style.display="none";
     document.getElementById("portal").style.display="block";
-    document.getElementById("user").innerText=u;
-    load();
+    document.getElementById("user").innerText = u;
+    loadQuestions();
   }
 }
 
-function post() {
-  let q = document.getElementById("question").value;
+function postQuestion() {
+  let q = document.getElementById("question").value.trim();
   if(q==="") return;
-  let arr = JSON.parse(localStorage.getItem("questions") || "[]");
-  arr.push(q);
-  localStorage.setItem("questions", JSON.stringify(arr));
+  let qs = JSON.parse(localStorage.getItem("questions") || "[]");
+
+  // Generate career advice based on keywords
+  let lowerQ = q.toLowerCase();
+  let a = "Sorry, I don't have advice for that yet. Try asking about skills, programming, or jobs.";
+  for(let key in answers){
+    if(lowerQ.includes(key)){
+      a = answers[key];
+      break;
+    }
+  }
+
+  qs.push({question:q, answer:a});
+  localStorage.setItem("questions", JSON.stringify(qs));
   document.getElementById("question").value="";
-  load();
+  loadQuestions();
 }
 
-function load() {
-  let arr = JSON.parse(localStorage.getItem("questions") || "[]");
-  let out="";
-  arr.forEach(x => out += "<li>"+x+"</li>");
+function loadQuestions() {
+  let qs = JSON.parse(localStorage.getItem("questions") || "[]");
+  let out = "";
+  qs.forEach(obj => {
+    out += `<li><b>Q:</b> ${obj.question}<br><span class="answer"><b>Advice:</b> ${obj.answer}</span></li>`;
+  });
   document.getElementById("list").innerHTML = out;
 }
 
-show();
+showPortal();
 </script>
 
 </body>
