@@ -1,90 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Career & DSA Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Career Guidance Portal</title>
   <style>
-    body { font-family: Arial; background:#0f172a; color:white; padding:20px; }
-    input, textarea, button { width:90%; max-width:400px; padding:10px; margin:5px 0; border-radius:6px; border:none; }
-    button { cursor:pointer; font-weight:bold; }
-    .box { background:#1e293b; padding:20px; border-radius:10px; margin:10px auto; max-width:500px; }
-    .answer { padding:10px; border-radius:8px; margin-top:5px; }
-    .programming { background:#2563eb33; color:white; }
-    .dsa { background:#db277733; color:white; }
-    .career { background:#16a34a33; color:white; }
-    #logout { background:#ef4444; margin-top:10px; width:95%; }
-    mark { background:#fcd34d; color:black; }
+    body { font-family: Arial; padding: 20px; }
+    #chat { display: none; }
+    textarea { width: 100%; height: 80px; }
+    button { padding: 8px 15px; margin-top: 10px; }
+    #answer { margin-top: 15px; font-weight: bold; }
   </style>
 </head>
+
 <body>
 
-<h1>Career & DSA Portal</h1>
+<h2>Student Career Guidance</h2>
 
-<div class="box" id="loginBox">
+<div id="login">
   <input id="username" placeholder="Enter username">
   <button onclick="login()">Login</button>
 </div>
 
-<div class="box" id="portal" style="display:none">
-  <h2>Welcome, <span id="user"></span></h2>
-  <textarea id="question" placeholder="Ask question about Programming, DSA, or Career"></textarea>
-  <button onclick="postQuestion()">Get Advice</button>
-  <button id="logout" onclick="logout()">Logout</button>
-  <ul id="list"></ul>
+<div id="chat">
+  <p>Welcome, <span id="user"></span></p>
+
+  <textarea id="question" placeholder="Ask your career question..."></textarea>
+  <button onclick="getAnswer()">Ask</button>
+
+  <div id="answer"></div>
 </div>
 
 <script>
-// Keywords and answers
-let answers = {
-  "programming": { "python":"Python is great for AI, Web, Data Science.", "java":"Java is used for apps and Android.", "c++":"C++ is important for competitive programming.", "javascript":"JavaScript is used for web development." },
-  "dsa": { "dsa":"DSA is essential for coding interviews.", "algorithm":"Practice sorting, searching, recursion, graphs.", "recursion":"Recursion is when a function calls itself.", "graph":"Graphs model networks and problems." },
-  "career": { "internship":"Try internships in startups.", "placements":"Practice coding, aptitude, soft skills.", "skills":"Focus on coding, problem solving, communication.", "jobs":"IT, Web Development, AI, Cloud." }
-};
-
-// Login/logout functions
-function login(){
-  let u=document.getElementById("username").value.trim();
-  if(u===""){ alert("Enter username"); return; }
+function login() {
+  let u = document.getElementById("username").value.trim();
+  if (u === "") { alert("Enter username"); return; }
   localStorage.setItem("user", u);
-  showPortal();
-}
-function logout(){ localStorage.removeItem("user"); document.getElementById("portal").style.display="none"; document.getElementById("loginBox").style.display="block"; }
-
-// Show portal based on login
-function showPortal(){
-  let u=localStorage.getItem("user");
-  if(u){ document.getElementById("loginBox").style.display="none"; document.getElementById("portal").style.display="block"; document.getElementById("user").innerText=u; loadQuestions(); }
-  else{ document.getElementById("portal").style.display="none"; document.getElementById("loginBox").style.display="block"; }
+  document.getElementById("login").style.display = "none";
+  document.getElementById("chat").style.display = "block";
+  document.getElementById("user").innerText = u;
 }
 
-// Keyword highlighting
-function highlightKeywords(text, keywords){ keywords.forEach(k=>{ let re=new RegExp(k,"gi"); text=text.replace(re,`<mark>${k}</mark>`); }); return text; }
+function getAnswer() {
+  let q = document.getElementById("question").value.toLowerCase();
+  let a = "";
 
-// Post a question
-function postQuestion(){
-  let q=document.getElementById("question").value.trim();
-  if(q===""){ alert("Type a question!"); return; }
-  let qs=JSON.parse(localStorage.getItem("questions")||"[]");
-  let lowerQ=q.toLowerCase();
-  let a="Sorry, I don't have advice yet."; let cat="career"; let keys=[];
-  for(let c in answers){ for(let k in answers[c]){ if(lowerQ.includes(k)){ a=answers[c][k]; cat=c; keys.push(k); break; } } }
-  qs.push({question:q, answer:a, category:cat, keywords:keys});
-  localStorage.setItem("questions", JSON.stringify(qs));
-  document.getElementById("question").value=""; loadQuestions();
+  if (q.includes("python")) {
+    a = "Learn Python basics, then OOPs, data structures, and practice on HackerRank.";
+  } 
+  else if (q.includes("dsa")) {
+    a = "Start with arrays, strings, linked lists, then stacks, queues, trees, and graphs.";
+  }
+  else if (q.includes("career")) {
+    a = "Choose a field based on interest: software, data science, core engineering, or govt exams.";
+  }
+  else if (q.includes("engineering")) {
+    a = "Engineering needs consistent practice, projects, internships, and skill development.";
+  }
+  else {
+    a = "Please ask about Python, DSA, career, or engineering.";
+  }
+
+  document.getElementById("answer").innerText = a;
 }
-
-// Load questions
-function loadQuestions(){
-  let qs=JSON.parse(localStorage.getItem("questions")||"[]"); let out="";
-  qs.forEach(obj=>{
-    let qH=highlightKeywords(obj.question,obj.keywords);
-    out+=`<li><b>[${obj.category.toUpperCase()}]</b> Q: ${qH}<br><span class="answer ${obj.category}">Advice: ${obj.answer}</span></li>`;
-  });
-  document.getElementById("list").innerHTML=out;
-}
-
-showPortal();
 </script>
 
 </body>
-  </html>
+</html>
