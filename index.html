@@ -2,28 +2,68 @@
 <html>
 <head>
   <title>Career Guidance Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: Arial; padding: 20px; }
-    #chat { display: none; }
-    textarea { width: 100%; height: 80px; }
-    button { padding: 8px 15px; margin-top: 10px; }
-    #answer { margin-top: 15px; font-weight: bold; }
+    body {
+      font-family: Arial;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    ul li {
+      background: #e8e8e8;
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #answer {
+      margin-top: 15px;
+      padding: 10px;
+      background: #e0ffe0;
+      border-radius: 5px;
+    }
   </style>
 </head>
 
 <body>
 
-<h2>Student Career Guidance</h2>
-
-<div id="login">
+<div class="box" id="loginBox">
+  <h2>Student Login</h2>
   <input id="username" placeholder="Enter username">
   <button onclick="login()">Login</button>
 </div>
 
-<div id="chat">
-  <p>Welcome, <span id="user"></span></p>
+<div class="box" id="mainBox" style="display:none;">
+  <h3 id="welcome"></h3>
 
-  <textarea id="question" placeholder="Ask your career question..."></textarea>
+  <p><b>Suggested Questions (tap one):</b></p>
+  <ul>
+    <li onclick="fillQuestion('What is Python and how to learn it?')">What is Python and how to learn it?</li>
+    <li onclick="fillQuestion('How to start DSA from basics?')">How to start DSA from basics?</li>
+    <li onclick="fillQuestion('Which career is best after BTech?')">Which career is best after BTech?</li>
+    <li onclick="fillQuestion('How to prepare for placements?')">How to prepare for placements?</li>
+  </ul>
+
+  <textarea id="question" placeholder="Ask your question here..."></textarea>
   <button onclick="getAnswer()">Ask</button>
 
   <div id="answer"></div>
@@ -32,35 +72,48 @@
 <script>
 function login() {
   let u = document.getElementById("username").value.trim();
-  if (u === "") { alert("Enter username"); return; }
+  if (u === "") {
+    alert("Please enter username");
+    return;
+  }
   localStorage.setItem("user", u);
-  document.getElementById("login").style.display = "none";
-  document.getElementById("chat").style.display = "block";
-  document.getElementById("user").innerText = u;
+  showMain();
+}
+
+function showMain() {
+  let u = localStorage.getItem("user");
+  if (u) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("mainBox").style.display = "block";
+    document.getElementById("welcome").innerText = "Welcome, " + u;
+  }
+}
+
+function fillQuestion(text) {
+  document.getElementById("question").value = text;
 }
 
 function getAnswer() {
   let q = document.getElementById("question").value.toLowerCase();
-  let a = "";
+  let ans = "Sorry, guidance for this question will be added soon.";
 
   if (q.includes("python")) {
-    a = "Learn Python basics, then OOPs, data structures, and practice on HackerRank.";
+    ans = "Python is beginner-friendly. Start with basics, then practice problems daily.";
   } 
   else if (q.includes("dsa")) {
-    a = "Start with arrays, strings, linked lists, then stacks, queues, trees, and graphs.";
+    ans = "Start DSA with arrays, strings, recursion, then move to trees and graphs.";
   }
   else if (q.includes("career")) {
-    a = "Choose a field based on interest: software, data science, core engineering, or govt exams.";
+    ans = "Choose career based on interest: Software, Data Science, AI, Core Engineering.";
   }
-  else if (q.includes("engineering")) {
-    a = "Engineering needs consistent practice, projects, internships, and skill development.";
-  }
-  else {
-    a = "Please ask about Python, DSA, career, or engineering.";
+  else if (q.includes("placement")) {
+    ans = "Prepare coding, aptitude, communication, and revise core subjects.";
   }
 
-  document.getElementById("answer").innerText = a;
+  document.getElementById("answer").innerText = ans;
 }
+
+showMain();
 </script>
 
 </body>
